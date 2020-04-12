@@ -1,0 +1,85 @@
+https://wangshengying.github.io/ibook/
+最后的book是仓库名
+
+首先建立一个仓库
+在vscode里面打开克隆下来的仓库
+创建 SUMMARY 雪山飞狐、连城诀、天龙八部、射雕英雄传的md文件
+编辑上述四个文件，一级标题用# 雪山飞狐表示
+再编辑SUMMARY.md
+- [简介](README.md)
+- [第一章](雪山飞狐.md)
+- [第二章](连城诀.md)
+。
+。
+。
+编辑README.md
+文件全部编辑好以后，建立终端运行：gitbook build
+然后 cd _book ，ls一下看看是不是md文件转化成了html文件
+然后把根文件夹下的除了 .git文件夹、_book文件夹、.gitignore文件
+全部上传到github上。
+git init
+git add 文件名
+git commit -m""
+git push
+上传后，需要在git命令板输入git checkout -b gh-pages
+(创建一个名为gh-pages的分支，默认的是发布分支，gh-pages名字不可以改变)
+然后上传根文件夹下md文件以及
+                _book文件夹下所有的文件
+自动化构建：
+把https://github.com/wangding/spa/blob/master/.travis.yml
+中的代码复制一份
+根目录下新建一个文件 .travis.yml(这个文件前面带 . )
+然后删删减减后剩下
+language: node_js
+node_js:
+  - "node"
+
+after_script:
+  - gitbook build
+  - cd ./_book
+  - git init
+  - git config user.name "${USER_NAME}"
+  - git config user.email "${USER_EMAIL}"
+  - git add .
+  - git commit -m "publish gitbook"
+  - git push --force --quiet "https://${ACC_TOKEN}@${GH_REF}" master:${BRANCH}
+
+branches:
+  only:
+    - master
+再创建需要新增的文件例如ch02.md
+此时一定要在master分支下进行：
+git checkout master
+然后将ch02.md与.travis.yml文件一起推送上去
+然后查看commits
+在master分支下如果刚刚提交的没有小黄点，去travis-ci官网：
+https://travis-ci.org/
+关联一下自己的GitHub账号
+然后点红叉
+看见它报的错
+然后在vscode新的终端里面运行npm init -y（创建package.json文件）
+然后npm i -D gitbook-cli
+然后配置package.json
+{
+  "name": "novel",
+  "version": "1.0.0",
+  "description": "这是一个展示金庸好看的小说的电子书",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wangshengying/novel.git"
+  },
+  "keywords": [],
+  "author": "wangshengying",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wangshengying/novel/issues"
+  },
+  "homepage": "https://github.com/wangshengying/novel#readme",
+  "devDependencies": {
+    "gitbook-cli": "^2.3.2"
+  }
+}
